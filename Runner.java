@@ -22,7 +22,7 @@ public class Runner
         this.bidsWon = new int[numberOfThreads];
     }
 
-    public void run() throws InterruptedException 
+    public long run() throws InterruptedException 
     {
         Thread[] threads = new Thread[numberOfThreads];
 
@@ -49,7 +49,9 @@ public class Runner
 
         long endTime = System.nanoTime();
 
-        reportResults(endTime - startTime);
+        long executionTime = endTime - startTime;
+        reportResults(executionTime);
+        return executionTime;
     }
 
     /*Defines the behaviour of an individual bidder. Note you have to decide how to incorporate your lock.*/

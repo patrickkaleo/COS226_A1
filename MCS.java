@@ -5,8 +5,8 @@ public class MCS implements Lock {
 
     //QNode class
     private class QNode {
-        QNode next=null;
-        boolean locked=false;
+        volatile QNode next=null;
+        volatile boolean locked=false;
     }
 
     public MCS() {

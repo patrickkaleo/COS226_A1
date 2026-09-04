@@ -3,7 +3,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class CLH implements Lock {
     private class QNode {
-        public boolean locked=false;
+        public volatile boolean locked=false;
     }
 
 
@@ -12,7 +12,7 @@ public class CLH implements Lock {
     ThreadLocal<QNode> myPred;
 
     public CLH() {
-        this.tail = new AtomicReference<>(null);
+        this.tail = new AtomicReference<>(new QNode());
         this.myNode = new ThreadLocal<QNode>() {
             protected QNode initialValue() {
                 return new QNode();
@@ -21,7 +21,7 @@ public class CLH implements Lock {
 
         this.myPred = new ThreadLocal<QNode>() {
             protected QNode initialValue() {
-                return null;
+                return new QNode();
             }
         };
     }
@@ -31,7 +31,11 @@ public class CLH implements Lock {
         QNode qnode = myNode.get();
         qnode.locked=true;
         QNode pred = this.tail.getAndSet(qnode);
-        while(pred.locked) {/*WAIT FOR THE PRED TO BE FREE */}
+        myPred.set(pred);
+
+        if (pred != null) {
+            while(pred.locked) {/*WAIT FOR THE PRED TO BE FREE */}
+        }
     }
 
     @Override
