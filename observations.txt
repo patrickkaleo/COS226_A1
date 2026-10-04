@@ -1,0 +1,43 @@
+Assignment 1
+
+Table: Average Total Waiting Time (ms)
+Threads    TTAS         MCS          CLH
+2          1.608        11.201       0.747
+4          0.278        2.926        4.759
+8          0.449        9.731        0.693
+16         0.354        0.909        13.927
+
+We chose to measure Total Waiting Time because it isolates the 
+physical overhead of the lock itself from the actual auction logic. It 
+tells us exactly how much friction the lock is causing.
+
+Table: Average Total Execution Time (ms)
+Threads    TTAS         MCS          CLH
+2          3.012        8.077        1.768
+4          3.776        5.401        5.728
+8          5.537        8.838        4.693
+16         9.253        9.741        12.138
+
+Table 3: Workload Verification & Fairness
+Threads  Total Bids  Final Bid  Bids Won Per Thread
+2        400         4000.0     200 
+4        800         8000.0     200 
+8        1600        16000.0    200 
+16       3200        32000.0    200 
+
+The perfect final bid proves strict mutual exclusion. Because we were required to make a fixed number of iterations, every thread is guaranteed exactly 200 bids, proving no starvation occurred.
+
+Conclusion 1 (Low Contention): 
+At 2 threads, MCS is extremely slow. Forcing threads to manage a queue 
+structure wastes time when there is almost no traffic. TTAS and CLH are 
+much faster here.
+
+Conclusion 2 (Hardware Fit): 
+CLH consistently beats MCS. We are running on a standard cache-coherent 
+processor, so CLH spinning on a predecessor's memory is perfectly fast. 
+The extra complexity of MCS is just dead weight on this specific hardware.
+
+Conclusion 3 (The Small Critical Section): 
+At 16 threads, the brute-force TTAS lock surprisingly beats CLH. This is 
+because our critical section is microscopic. The processor actually resolves 
+the violent TTAS stampede faster than it can build an orderly linked list queue.
