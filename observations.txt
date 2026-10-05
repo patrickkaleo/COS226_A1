@@ -41,3 +41,13 @@ Conclusion 3 (The Small Critical Section):
 At 16 threads, the brute-force TTAS lock surprisingly beats CLH. This is 
 because our critical section is microscopic. The processor actually resolves 
 the violent TTAS stampede faster than it can build an orderly linked list queue.
+
+Conclusion 4 (No universally best lock):
+The results do not have a universally superior lock. The performance of TTAS,
+CLH and MCS changed according to the number of competing threads and the 
+observed runtime conditions.
+
+Conclusion 5 (High-contention Variability):
+At 16 threads, there were extreme outliers for MCS and CLH. This demonstrates 
+that concurrent performance measurements can be affected by scheduling and 
+other system-level factors.
